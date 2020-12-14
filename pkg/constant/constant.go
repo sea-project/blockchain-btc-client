@@ -5,6 +5,8 @@ const (
 	GetBlockHash = "getblockhash"
 	GetBlock = "getblock"
 	GetRawTransaction = "getrawtransaction"
+	ImportAddress = "importaddress"
+	ListUnspent = "listunspent"
 	OmniListBlockTransactions = "omni_listblocktransactions"
 	OmniGetTransaction = "omni_gettransaction"
 )

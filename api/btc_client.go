@@ -6,6 +6,8 @@ import (
 	"github.com/sea-project/blockchain-btc-client/model"
 	"github.com/sea-project/blockchain-btc-client/pkg/constant"
 	"github.com/sea-project/blockchain-btc-client/request"
+	external_api "github.com/sea-project/blockchain-btc-client/service/external-api"
+	"github.com/sea-project/sea-pkg/util/decimal"
 	"strconv"
 )
 
@@ -101,15 +103,61 @@ func (c *BTCClient) GetRawTransaction(txid string, format bool) (interface{}, er
 	return result, nil
 }
 
+// ImportAddress 导入地址
+func (c *BTCClient) ImportAddress(addressOrScript, account string, rescan bool) error {
+	params := make([]interface{}, 0)
+	params = append(params, addressOrScript)
+	params = append(params, account)
+	params = append(params, rescan)
+	_, err := c.client.HttpRequest(constant.ImportAddress, params)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// ListUnspent 返回归属于本钱包的未消费交易输出数组
+func (c *BTCClient) ListUnspent(minimumConfirmations, maximumConfirmations uint64, addresses []string) ([]model.ListUnspentResult, error) {
+	params := make([]interface{}, 0)
+	params = append(params, minimumConfirmations)
+	params = append(params, maximumConfirmations)
+	params = append(params, addresses)
+	result, err := c.client.HttpRequest(constant.ListUnspent, params)
+	if err != nil {
+		return nil, err
+	}
+	// 返回数据类型转换
+	temp, err := json.Marshal(result)
+	if err != nil {
+		return nil, fmt.Errorf("ListUnspent result json.Marshal failed err:%v", err.Error())
+	}
+	listUnspentResult := make([]model.ListUnspentResult, 0)
+	err = json.Unmarshal(temp, &listUnspentResult)
+	if err != nil {
+		return nil, fmt.Errorf("ListUnspent result json.Unmarshal failed err:%v", err.Error())
+	}
+	return listUnspentResult, nil
+}
+
 // GetBalance 获取比特币余额
-func (c *BTCClient) GetBalance(address string, propertyid uint64) (uint64, error) {
+func (c *BTCClient) GetBalance(address string, confirmations int) (string, error) {
 	if c.clientType == TypeExternalAPI {
 		// 该种方式是调用外部接口类型
-
-	} else if (c.clientType == TypeAddListen) {
+		return external_api.GetBalance(address, confirmations)
+	} else if c.clientType == TypeAddListen {
 		// 该种方式是向节点添加监听但不扫描之前交易类型
-
-	} else {
-		return 0, fmt.Errorf("type not support")
+		// 获取某个地址所有UTXO
+		addresses := make([]string, 0)
+		addresses = append(addresses, address)
+		allUTXOInfo, err := c.ListUnspent(1, 9999999, addresses)
+		if err != nil {
+			return "", fmt.Errorf("GetBalance c.ListUnspent err:%v", err)
+		}
+		balanceDec := decimal.NewFromFloat(0)
+		for i := 0; i < len(allUTXOInfo); i++ {
+			balanceDec = balanceDec.Add(decimal.NewFromFloat(allUTXOInfo[i].Amount))
+		}
+		return balanceDec.String(), nil
 	}
+	return "", fmt.Errorf("type not support")
 }
