@@ -117,26 +117,34 @@ func (c *BTCClient) ImportAddress(addressOrScript, account string, rescan bool) 
 }
 
 // ListUnspent 返回归属于本钱包的未消费交易输出数组
-func (c *BTCClient) ListUnspent(minimumConfirmations, maximumConfirmations uint64, addresses []string) ([]model.ListUnspentResult, error) {
-	params := make([]interface{}, 0)
-	params = append(params, minimumConfirmations)
-	params = append(params, maximumConfirmations)
-	params = append(params, addresses)
-	result, err := c.client.HttpRequest(constant.ListUnspent, params)
-	if err != nil {
-		return nil, err
+func (c *BTCClient) ListUnspent(address string, minimumConfirmations int) ([]*model.ListUnspentResult, error) {
+	if c.clientType == TypeExternalAPI {
+		// 该种方式是调用外部接口类型
+		return external_api.ListUnspent(address, minimumConfirmations)
+	} else if c.clientType == TypeAddListen {
+		params := make([]interface{}, 0)
+		params = append(params, minimumConfirmations)
+		params = append(params, 9999999)
+		addresses := make([]string, 0)
+		addresses = append(addresses, address)
+		params = append(params, addresses)
+		result, err := c.client.HttpRequest(constant.ListUnspent, params)
+		if err != nil {
+			return nil, err
+		}
+		// 返回数据类型转换
+		temp, err := json.Marshal(result)
+		if err != nil {
+			return nil, fmt.Errorf("ListUnspent result json.Marshal failed err:%v", err.Error())
+		}
+		listUnspentResult := make([]*model.ListUnspentResult, 0)
+		err = json.Unmarshal(temp, &listUnspentResult)
+		if err != nil {
+			return nil, fmt.Errorf("ListUnspent result json.Unmarshal failed err:%v", err.Error())
+		}
+		return listUnspentResult, nil
 	}
-	// 返回数据类型转换
-	temp, err := json.Marshal(result)
-	if err != nil {
-		return nil, fmt.Errorf("ListUnspent result json.Marshal failed err:%v", err.Error())
-	}
-	listUnspentResult := make([]model.ListUnspentResult, 0)
-	err = json.Unmarshal(temp, &listUnspentResult)
-	if err != nil {
-		return nil, fmt.Errorf("ListUnspent result json.Unmarshal failed err:%v", err.Error())
-	}
-	return listUnspentResult, nil
+	return nil, fmt.Errorf("type not support")
 }
 
 // GetBalance 获取比特币余额
@@ -147,9 +155,9 @@ func (c *BTCClient) GetBalance(address string, confirmations int) (string, error
 	} else if c.clientType == TypeAddListen {
 		// 该种方式是向节点添加监听但不扫描之前交易类型
 		// 获取某个地址所有UTXO
-		addresses := make([]string, 0)
-		addresses = append(addresses, address)
-		allUTXOInfo, err := c.ListUnspent(1, 9999999, addresses)
+		//addresses := make([]string, 0)
+		//addresses = append(addresses, address)
+		allUTXOInfo, err := c.ListUnspent(address, 1)
 		if err != nil {
 			return "", fmt.Errorf("GetBalance c.ListUnspent err:%v", err)
 		}

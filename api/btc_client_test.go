@@ -25,12 +25,15 @@ func TestBTCClient_ImportAddress(t *testing.T) {
 
 func TestBTCClient_ListUnspent(t *testing.T) {
 	client := NewBTCClient("http://47.75.116.218:8332/", "admin", "123456", TypeAddListen)
-	addresses := make([]string, 0)
-	addresses = append(addresses, "n4MiXKhTD69pzxq2Mr7onaPfNXv5KLm5Rb")
-	result, err := client.ListUnspent(6, 9999999, addresses)
+	//addresses := make([]string, 0)
+	//addresses = append(addresses, "n4MiXKhTD69pzxq2Mr7onaPfNXv5KLm5Rb")
+	address := "n4MiXKhTD69pzxq2Mr7onaPfNXv5KLm5Rb"
+	result, err := client.ListUnspent(address, 6)
 	if err != nil {
 		t.Errorf("err:%v", err)
 		return
 	}
-	t.Logf("result:%v", result)
+	for i := 0; i < len(result); i++ {
+		t.Logf("result:%v", result[i])
+	}
 }
