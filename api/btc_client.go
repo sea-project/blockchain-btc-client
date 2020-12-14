@@ -169,3 +169,17 @@ func (c *BTCClient) GetBalance(address string, confirmations int) (string, error
 	}
 	return "", fmt.Errorf("type not support")
 }
+
+// SendRawTransaction 广播裸交易
+func (c *BTCClient) SendRawTransaction(transaction string) (string, error) {
+	params := make([]interface{}, 0)
+	params = append(params, transaction)
+	result, err := c.client.HttpRequest(constant.SendRawTransaction, params)
+	if err != nil {
+		return "", err
+	}
+	if txid, ok := result.(string); ok {
+		return txid, nil
+	}
+	return "", fmt.Errorf("SendRawTransaction txid Parse failed")
+}

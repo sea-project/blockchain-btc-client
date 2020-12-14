@@ -7,6 +7,7 @@ const (
 	GetRawTransaction = "getrawtransaction"
 	ImportAddress = "importaddress"
 	ListUnspent = "listunspent"
+	SendRawTransaction = "sendrawtransaction"
 	OmniListBlockTransactions = "omni_listblocktransactions"
 	OmniGetTransaction = "omni_gettransaction"
 )
