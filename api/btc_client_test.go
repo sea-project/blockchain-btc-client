@@ -47,3 +47,14 @@ func TestBTCClient_GetBlockFeeLatest(t *testing.T) {
 	}
 	t.Logf("result:%v", result)
 }
+
+func TestBTCClient_GetOMNIBalance(t *testing.T) {
+	client := NewBTCClient("http://8.210.178.221:8332/", "admin", "Q3Az6XHNdE", TypeAddListen)
+	address := "3GyeFJmQynJWd8DeACm4cdEnZcckAtrfcN"
+	num, err := client.GetOMNIBalance(address, 31)
+	if err != nil {
+		t.Errorf("err:%v", err)
+		return
+	}
+	t.Logf("num:%v", num)
+}

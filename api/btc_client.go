@@ -155,8 +155,6 @@ func (c *BTCClient) GetBalance(address string, confirmations int) (string, error
 	} else if c.clientType == TypeAddListen {
 		// 该种方式是向节点添加监听但不扫描之前交易类型
 		// 获取某个地址所有UTXO
-		//addresses := make([]string, 0)
-		//addresses = append(addresses, address)
 		allUTXOInfo, err := c.ListUnspent(address, 1)
 		if err != nil {
 			return "", fmt.Errorf("GetBalance c.ListUnspent err:%v", err)
@@ -190,4 +188,27 @@ func (c *BTCClient) GetBlockFeeLatest() (*model.BlockFee, error) {
 		return external_api.GetBlockFeeLatest()
 	}
 	return nil, fmt.Errorf("GetBlockFeeLatest type not support")
+}
+
+// GetOMNIBalance 获取omni账户的余额
+func (c *BTCClient) GetOMNIBalance(address string, propertyid int) (string, error) {
+	params := make([]interface{}, 0)
+	params = append(params, address)
+	params = append(params, propertyid)
+	result, err := c.client.HttpRequest(constant.OmniGetBalance, params)
+	if err != nil {
+		return "", err
+	}
+
+	// 返回数据类型转换
+	temp, err := json.Marshal(result)
+	if err != nil {
+		return "", fmt.Errorf("GetOMNIBalance result json.Marshal failed err:%v", err.Error())
+	}
+	respOMNIGetBalance := new(model.RespOMNIGetBalance)
+	err = json.Unmarshal(temp, &respOMNIGetBalance)
+	if err != nil {
+		return "", fmt.Errorf("GetOMNIBalance result json.Unmarshal failed err:%v", err.Error())
+	}
+	return respOMNIGetBalance.Balance, nil
 }
