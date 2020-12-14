@@ -100,3 +100,16 @@ func (c *BTCClient) GetRawTransaction(txid string, format bool) (interface{}, er
 	}
 	return result, nil
 }
+
+// GetBalance 获取比特币余额
+func (c *BTCClient) GetBalance(address string, propertyid uint64) (uint64, error) {
+	if c.clientType == TypeExternalAPI {
+		// 该种方式是调用外部接口类型
+
+	} else if (c.clientType == TypeAddListen) {
+		// 该种方式是向节点添加监听但不扫描之前交易类型
+
+	} else {
+		return 0, fmt.Errorf("type not support")
+	}
+}

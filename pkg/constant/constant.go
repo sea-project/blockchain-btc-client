@@ -8,3 +8,4 @@ const (
 	OmniListBlockTransactions = "omni_listblocktransactions"
 	OmniGetTransaction = "omni_gettransaction"
 )
+
