@@ -212,3 +212,10 @@ func (c *BTCClient) GetOMNIBalance(address string, propertyid int) (string, erro
 	}
 	return respOMNIGetBalance.Balance, nil
 }
+
+// GetOMNITransaction 获取指定Omni交易的详细信息
+func (c *BTCClient) GetOMNITransaction(txid string) (interface{}, error) {
+	params := make([]interface{}, 0)
+	params = append(params, txid)
+	return c.client.HttpRequest(constant.OmniGetTransaction, params)
+}
