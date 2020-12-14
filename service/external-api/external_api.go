@@ -67,3 +67,19 @@ func ListUnspent(address string, confirmations int) ([]*model.ListUnspentResult,
 	}
 	return allUTXOInfo, nil
 }
+
+// GetBlockFeeLatest 获取最新手续费信息
+func GetBlockFeeLatest() (*model.BlockFee, error) {
+	url := "https://bitcoinfees.earn.com/api/v1/fees/recommended"
+	client := httpclient.NewClient(url)
+	result, err := client.HttpGetRequest()
+	if err != nil {
+		return nil, fmt.Errorf("GetBlockFeeLatest client.HttpGetRequest err:%v", err.Error())
+	}
+	blockFee := new(model.BlockFee)
+	err = json.Unmarshal(result, &blockFee)
+	if err != nil {
+		return nil, fmt.Errorf("GetBlockFeeLatest json.Unmarshal err:%v", err.Error())
+	}
+	return blockFee, nil
+}

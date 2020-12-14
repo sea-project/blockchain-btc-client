@@ -37,3 +37,13 @@ func TestBTCClient_ListUnspent(t *testing.T) {
 		t.Logf("result:%v", result[i])
 	}
 }
+
+func TestBTCClient_GetBlockFeeLatest(t *testing.T) {
+	client := NewBTCClient("http://47.75.116.218:8332/", "admin", "123456", TypeAddListen)
+	result, err := client.GetBlockFeeLatest()
+	if err != nil {
+		t.Errorf("err:%v", err)
+		return
+	}
+	t.Logf("result:%v", result)
+}

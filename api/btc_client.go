@@ -144,7 +144,7 @@ func (c *BTCClient) ListUnspent(address string, minimumConfirmations int) ([]*mo
 		}
 		return listUnspentResult, nil
 	}
-	return nil, fmt.Errorf("type not support")
+	return nil, fmt.Errorf("ListUnspent type not support")
 }
 
 // GetBalance 获取比特币余额
@@ -167,7 +167,7 @@ func (c *BTCClient) GetBalance(address string, confirmations int) (string, error
 		}
 		return balanceDec.String(), nil
 	}
-	return "", fmt.Errorf("type not support")
+	return "", fmt.Errorf("GetBalance type not support")
 }
 
 // SendRawTransaction 广播裸交易
@@ -182,4 +182,12 @@ func (c *BTCClient) SendRawTransaction(transaction string) (string, error) {
 		return txid, nil
 	}
 	return "", fmt.Errorf("SendRawTransaction txid Parse failed")
+}
+
+// GetBlockFeeLatest 获取最新手续费信息
+func (c *BTCClient) GetBlockFeeLatest() (*model.BlockFee, error) {
+	if c.clientType == TypeExternalAPI || c.clientType == TypeAddListen {
+		return external_api.GetBlockFeeLatest()
+	}
+	return nil, fmt.Errorf("GetBlockFeeLatest type not support")
 }

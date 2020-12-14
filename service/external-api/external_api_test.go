@@ -10,3 +10,12 @@ func TestGetBalance(t *testing.T) {
 	}
 	t.Logf("balance:%v", balance)
 }
+
+func TestGetBlockFeeLatest(t *testing.T) {
+	result, err := GetBlockFeeLatest()
+	if err != nil {
+		t.Errorf("err:%v", err)
+		return
+	}
+	t.Logf("result:%v", result)
+}
