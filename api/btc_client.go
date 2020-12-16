@@ -7,6 +7,7 @@ import (
 	"github.com/sea-project/blockchain-btc-client/pkg/constant"
 	"github.com/sea-project/blockchain-btc-client/request"
 	external_api "github.com/sea-project/blockchain-btc-client/service/external-api"
+	"github.com/sea-project/blockchain-btc-client/sign"
 	"github.com/sea-project/sea-pkg/util/decimal"
 	"strconv"
 )
@@ -229,8 +230,13 @@ func (c *BTCClient) OMNICreatePayloadSimpleSend(propertyid uint32, amount string
 	if err != nil {
 		return "", err
 	}
-	if txid, ok := result.(string); ok {
-		return "6a146f6d6e69" + txid, nil
+	if payload, ok := result.(string); ok {
+		return "6a146f6d6e69" + payload, nil
 	}
 	return "", fmt.Errorf("OMNICreatePayloadSimpleSend payload Parse failed")
+}
+
+// SignRawTx 签名交易
+func (c *BTCClient) SignRawTx(rawTx, privateKeyWif string, networkType string) (string, error) {
+	return sign.SignRawTx(rawTx, privateKeyWif, networkType)
 }
