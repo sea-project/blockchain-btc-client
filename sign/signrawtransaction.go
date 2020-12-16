@@ -137,10 +137,10 @@ func SignRawTransaction(cmd *SignRawTransactionCmd, chainCfg *chaincfg.Params) (
 				return nil, err
 			}
 
-			if !wif.IsForNet(chainCfg) {
-				s := "key network doesn't match wallet's"
-				return nil, errors.New(s)
-			}
+			//if !wif.IsForNet(chainCfg) {
+			//	s := "key network doesn't match wallet's"
+			//	return nil, errors.New(s)
+			//}
 
 			addr, err := btcutil.NewAddressPubKey(wif.SerializePubKey(), chainCfg)
 			if err != nil {
