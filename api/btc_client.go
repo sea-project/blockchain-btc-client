@@ -219,3 +219,18 @@ func (c *BTCClient) GetOMNITransaction(txid string) (interface{}, error) {
 	params = append(params, txid)
 	return c.client.HttpRequest(constant.OmniGetTransaction, params)
 }
+
+// OMNICreatePayloadSimpleSend 调用创建一个用于简单发送交易的载荷
+func (c *BTCClient) OMNICreatePayloadSimpleSend(propertyid uint32, amount string) (string, error) {
+	params := make([]interface{}, 0)
+	params = append(params, propertyid)
+	params = append(params, amount)
+	result, err := c.client.HttpRequest(constant.OMNICreatePayloadSimpleSend, params)
+	if err != nil {
+		return "", err
+	}
+	if txid, ok := result.(string); ok {
+		return "6a146f6d6e69" + txid, nil
+	}
+	return "", fmt.Errorf("OMNICreatePayloadSimpleSend payload Parse failed")
+}
