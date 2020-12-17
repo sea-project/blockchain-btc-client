@@ -57,11 +57,11 @@ func (c *BTCClient) GetBlockHash(height uint64) (string, error) {
 
 // GetBlock 获取指定哈希的区块信息
 // format 0:串流格式 1:json格式 2:json格式，同时解码区块中的交易
-func (c *BTCClient) GetBlock(blockHash string, format int) (*model.GetBlockResultV2, error) {
+func (c *BTCClient) GetBlock(blockHash string) (*model.GetBlockResultV2, error) {
 	params := make([]interface{}, 0)
 	// 第二个参数传2表示解码所有交易信息
 	params = append(params, blockHash)
-	params = append(params, format)
+	params = append(params, 2)
 	result, err := c.client.HttpRequest(constant.GetBlock, params)
 	if err != nil {
 		return nil, err
@@ -89,7 +89,7 @@ func (c *BTCClient) GetBlockByHeight(height uint64) (*model.GetBlockResultV2, er
 		return nil, err
 	}
 	// 根据区块高度获取区块信息
-	return c.GetBlock(blockHash, 2)
+	return c.GetBlock(blockHash)
 }
 
 // GetRawTransaction 获取交易详情
