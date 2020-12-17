@@ -55,6 +55,31 @@ func (c *BTCClient) GetBlockHash(height uint64) (string, error) {
 	return "", fmt.Errorf("GetBlockHash blockHash Parse failed")
 }
 
+// GetBlockHeader 根据区块哈希获取区块头信息
+func (c *BTCClient) GetBlockHeader(blockHash string) (*model.GetBlockHeaderVerboseResult, error) {
+	params := make([]interface{}, 0)
+	// 第二个参数传2表示解码所有交易信息
+	params = append(params, blockHash)
+	params = append(params, true)
+	result, err := c.client.HttpRequest(constant.GetBlcokHeader, params)
+	if err != nil {
+		return nil, err
+	}
+
+	// 返回数据类型转换
+	temp, err := json.Marshal(result)
+	if err != nil {
+		return nil, fmt.Errorf("GetBlockHeader result json.Marshal failed err:%v", err.Error())
+	}
+	blockHeader := new(model.GetBlockHeaderVerboseResult)
+	err = json.Unmarshal(temp, &blockHeader)
+	if err != nil {
+		return nil, fmt.Errorf("GetBlockHeader result json.Unmarshal failed err:%v", err.Error())
+	}
+
+	return blockHeader, nil
+}
+
 // GetBlock 获取指定哈希的区块信息
 // format 0:串流格式 1:json格式 2:json格式，同时解码区块中的交易
 func (c *BTCClient) GetBlock(blockHash string) (*model.GetBlockResultV2, error) {

@@ -3,6 +3,7 @@ package constant
 const (
 	GetBlockCount = "getblockcount"
 	GetBlockHash = "getblockhash"
+	GetBlcokHeader = "getblockheader"
 	GetBlock = "getblock"
 	GetRawTransaction = "getrawtransaction"
 	ImportAddress = "importaddress"

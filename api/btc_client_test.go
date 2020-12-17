@@ -12,6 +12,17 @@ func TestBTCClient_GetBlockCount(t *testing.T) {
 	t.Logf("num:%v", num)
 }
 
+func TestBTCClient_GetBlockHeader(t *testing.T) {
+	client := NewBTCClient("http://47.75.116.218:8332/", "admin", "123456", TypeAddListen)
+	blockHash := "01d2e5d11420a3961617959c90e240d0ffa33e705c6c1dd1e55720bb0cfff229"
+	result, err := client.GetBlockHeader(blockHash)
+	if err != nil {
+		t.Errorf("err:%v", err)
+		return
+	}
+	t.Logf("result:%v", result)
+}
+
 func TestBTCClient_ImportAddress(t *testing.T) {
 	client := NewBTCClient("http://47.75.116.218:8332/", "admin", "123456", TypeAddListen)
 	address := "n4MiXKhTD69pzxq2Mr7onaPfNXv5KLm5Rb"
