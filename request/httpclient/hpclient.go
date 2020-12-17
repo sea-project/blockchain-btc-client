@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 )
 
 // Client
@@ -19,9 +20,10 @@ func NewClient(url string) *Client {
 		url:    url,
 		client: &http.Client{
 			Transport: &http.Transport{
-				MaxIdleConnsPerHost: 100,  // 每台主机保持的最大空闲连接
-				MaxConnsPerHost: 100, 	  // 限制每个主机的连接总数
+				MaxIdleConnsPerHost: 10,  // 每台主机保持的最大空闲连接
+				ResponseHeaderTimeout: 10 * time.Second,
 			},
+			Timeout: 3 * time.Second,
 		},
 	}
 }
