@@ -32,7 +32,7 @@ func GetBalance(address string, confirmations int) (string, error) {
 }
 
 // ListUnspent 获取所有UTXO信息
-func ListUnspent(address string, confirmations int) ([]*model.ListUnspentResult, error) {
+func ListUnspent(address string, confirmations int) ([]model.ListUnspentResult, error) {
 	url := ""
 	if confirmations != 0 {
 		url = "https://blockchain.info/unspent?active="+address+"/?confirmations="+strconv.Itoa(confirmations)
@@ -49,7 +49,7 @@ func ListUnspent(address string, confirmations int) ([]*model.ListUnspentResult,
 	if err != nil {
 		return nil, fmt.Errorf("ListUnspent json.Unmarshal err:%v", err.Error())
 	}
-	allUTXOInfo := make([]*model.ListUnspentResult, 0)
+	allUTXOInfo := make([]model.ListUnspentResult, 0)
 	for i := 0; i < len(allUTXOInfoTemp); i++ {
 		utxoInfo := new(model.ListUnspentResult)
 		utxoInfo.TxID = allUTXOInfoTemp[i].TxHash
@@ -63,7 +63,7 @@ func ListUnspent(address string, confirmations int) ([]*model.ListUnspentResult,
 		utxoInfo.ScriptPubKey = allUTXOInfoTemp[i].Script
 		utxoInfo.Confirmations = allUTXOInfoTemp[i].Confirmations
 
-		allUTXOInfo = append(allUTXOInfo, utxoInfo)
+		allUTXOInfo = append(allUTXOInfo, *utxoInfo)
 	}
 	return allUTXOInfo, nil
 }

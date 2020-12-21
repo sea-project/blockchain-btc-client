@@ -143,7 +143,7 @@ func (c *BTCClient) ImportAddress(addressOrScript, account string, rescan bool) 
 }
 
 // ListUnspent 返回归属于本钱包的未消费交易输出数组
-func (c *BTCClient) ListUnspent(address string, minimumConfirmations int) ([]*model.ListUnspentResult, error) {
+func (c *BTCClient) ListUnspent(address string, minimumConfirmations int) ([]model.ListUnspentResult, error) {
 	if c.clientType == TypeExternalAPI {
 		// 该种方式是调用外部接口类型
 		return external_api.ListUnspent(address, minimumConfirmations)
@@ -163,7 +163,7 @@ func (c *BTCClient) ListUnspent(address string, minimumConfirmations int) ([]*mo
 		if err != nil {
 			return nil, fmt.Errorf("ListUnspent result json.Marshal failed err:%v", err.Error())
 		}
-		listUnspentResult := make([]*model.ListUnspentResult, 0)
+		listUnspentResult := make([]model.ListUnspentResult, 0)
 		err = json.Unmarshal(temp, &listUnspentResult)
 		if err != nil {
 			return nil, fmt.Errorf("ListUnspent result json.Unmarshal failed err:%v", err.Error())
