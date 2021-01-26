@@ -240,10 +240,23 @@ func (c *BTCClient) GetOMNIBalance(address string, propertyid int) (string, erro
 }
 
 // GetOMNITransaction 获取指定Omni交易的详细信息
-func (c *BTCClient) GetOMNITransaction(txid string) (interface{}, error) {
+func (c *BTCClient) GetOMNITransaction(txid string) (*model.RespOMNIGetTransaction, error) {
 	params := make([]interface{}, 0)
 	params = append(params, txid)
-	return c.client.HttpRequest(constant.OmniGetTransaction, params)
+	result, err := c.client.HttpRequest(constant.OmniGetTransaction, params)
+	if err != nil {
+		return nil, fmt.Errorf("BTCClient GetOMNITransaction c.client.HttpRequest err:%v", err)
+	}
+	temp, err := json.Marshal(result)
+	if err != nil {
+		return nil, fmt.Errorf("BTCClient GetOMNITransaction result json.Marshal failed err:%v", err.Error())
+	}
+	respOMNIGetTransaction := new(model.RespOMNIGetTransaction)
+	err = json.Unmarshal(temp, &respOMNIGetTransaction)
+	if err != nil {
+		return nil, fmt.Errorf("BTCClient GetOMNITransaction result json.Unmarshal failed err:%v", err.Error())
+	}
+	return respOMNIGetTransaction, nil
 }
 
 // OMNICreatePayloadSimpleSend 调用创建一个用于简单发送交易的载荷
