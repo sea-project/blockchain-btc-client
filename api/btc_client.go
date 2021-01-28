@@ -118,7 +118,7 @@ func (c *BTCClient) GetBlockByHeight(height uint64) (*model.GetBlockResultV2, er
 }
 
 // GetRawTransaction 获取交易详情
-func (c *BTCClient) GetRawTransaction(txid string, format bool) (interface{}, error) {
+func (c *BTCClient) GetRawTransaction(txid string, format bool) (*model.TxRawResult, error) {
 	params := make([]interface{}, 0)
 	params = append(params, txid)
 	params = append(params, format)
@@ -126,7 +126,18 @@ func (c *BTCClient) GetRawTransaction(txid string, format bool) (interface{}, er
 	if err != nil {
 		return nil, err
 	}
-	return result, nil
+	// 返回数据类型转换
+	temp, err := json.Marshal(result)
+	if err != nil {
+		return nil, fmt.Errorf("GetRawTransaction result json.Marshal failed err:%v", err.Error())
+	}
+	txInfo := new(model.TxRawResult)
+	err = json.Unmarshal(temp, &txInfo)
+	if err != nil {
+		return nil, fmt.Errorf("GetRawTransaction result json.Unmarshal failed err:%v", err.Error())
+	}
+
+	return txInfo, nil
 }
 
 // ImportAddress 导入地址

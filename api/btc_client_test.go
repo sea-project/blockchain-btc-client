@@ -23,6 +23,17 @@ func TestBTCClient_GetBlockHeader(t *testing.T) {
 	t.Logf("result:%v", result)
 }
 
+func TestBTCClient_GetRawTransaction(t *testing.T) {
+	client := NewBTCClient("http://8.210.195.246:8332/", "admin", "123456", TypeAddListen)
+	txid := "3f2952a1afd495fa170b84b3432fa027e546ab36ab1bd504290a14a6ee31bfd0"
+	result, err := client.GetRawTransaction(txid, true)
+	if err != nil {
+		t.Errorf("err:%v", err)
+		return
+	}
+	t.Logf("result:%v", result)
+}
+
 func TestBTCClient_ImportAddress(t *testing.T) {
 	client := NewBTCClient("http://47.75.116.218:8332/", "admin", "123456", TypeAddListen)
 	address := "n4MiXKhTD69pzxq2Mr7onaPfNXv5KLm5Rb"
